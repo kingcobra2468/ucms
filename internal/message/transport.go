@@ -22,7 +22,7 @@ type errorer interface {
 func MakeHTTPHandler(ms MessageService) http.Handler {
 	r := mux.NewRouter()
 
-	r.Methods("POST").Path("/message").Handler(httptransport.NewServer(
+	r.Methods("POST").Path("/notification").Handler(httptransport.NewServer(
 		makeNewNotificationEndpoint(ms),
 		decodeNewNotificationRequest,
 		encodeResponse,

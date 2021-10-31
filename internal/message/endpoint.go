@@ -2,7 +2,6 @@ package message
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/go-kit/kit/endpoint"
 )
@@ -10,7 +9,7 @@ import (
 type NewNotificationRequest struct {
 	Title       string `json:"title"`
 	Body        string `json:"body"`
-	ImageURL    string `json:"image"`
+	ImageURL    string `json:"image,omitempty"`
 	ServiceName string `json:"service_name"`
 }
 
@@ -22,7 +21,7 @@ type NewNotificationResponse struct {
 func makeNewNotificationEndpoint(ms MessageService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(NewNotificationRequest)
-		fmt.Println(req)
+		ms.Push(req.Title, req.Body, req.ImageURL, req.ServiceName)
 
 		return NewNotificationResponse{Success: true, Error: nil}, nil
 	}

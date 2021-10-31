@@ -1,12 +1,20 @@
 package message
 
+import (
+	"fmt"
+
+	"github.com/kingcobra2468/ucms/internal/notification"
+)
+
 type MessageService interface {
-	push(message string) (bool, error)
+	Push(title, body, url, serviceName string) (bool, error)
 }
 
-type Message struct {
+type MessageBroadcast struct {
+	Notifier *notification.Notifier
 }
 
-func (m Message) push(title, body, url, serviceName string) (bool, error) {
+func (mb MessageBroadcast) Push(title, body, url, serviceName string) (bool, error) {
+	mb.Notifier.SendNotification(fmt.Sprintf("%s - %s", serviceName, title), body, url)
 	return true, nil
 }

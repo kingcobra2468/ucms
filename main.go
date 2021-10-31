@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/kingcobra2468/ucms/internal/message"
+	"github.com/kingcobra2468/ucms/internal/notification"
 )
 
 func main() {
@@ -19,13 +21,15 @@ func main() {
 		logger = log.With(logger, "caller", log.DefaultCaller)
 	}
 
-	//var ds notification.DeviceSubscriber = notification.DeviceSubscriber{Topic: *topic}
-	//{
-	//	ds.Connect(context.Background())
-	//}
+	n := notification.Notifier{Topic: "un"}
+	{
+		if err := n.Connect(context.Background()); err != nil {
+			panic(err)
+		}
+	}
 
-	var service message.Message = message.Message{}
-	//service = device.LoggingMiddleware{Logger: logger, Next: service}
+	var service message.MessageService = message.MessageBroadcast{Notifier: &n}
+	service = message.LoggingMiddleware{Logger: logger, Next: service}
 	var h http.Handler = message.MakeHTTPHandler(service)
 
 	errs := make(chan error)

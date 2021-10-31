@@ -40,6 +40,11 @@ func (n *Notifier) SendNotification(title, body, url string) error {
 			ImageURL: url,
 		},
 		Topic: n.Topic,
+		Webpush: &messaging.WebpushConfig{
+			Notification: &messaging.WebpushNotification{
+				Icon: url,
+			},
+		},
 	}
 	_, err := n.client.Send(context.Background(), &message)
 
