@@ -17,7 +17,7 @@ The following environment variables are configurable when launching UCMS:
 - **UCMS_FCM_TOPIC (string)=** fcm topic for registration token subscription (default "un")
 
 ## **Topic**
-UCMS functions by attaching all devices to topic specified by the **--topic** flag. By default,
+UCMS functions by attaching all devices to topic specified by the topcic env var. By default,
 the topic will be "un" which stands for universal notification. Regardless, when sending
 notifications, ensure that notifications are being sent to the correct topic.
 
