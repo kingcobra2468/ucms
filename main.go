@@ -8,12 +8,24 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/caarlos0/env/v6"
 	"github.com/go-kit/kit/log"
 	"github.com/kingcobra2468/ucms/internal/message"
 	"github.com/kingcobra2468/ucms/internal/notification"
 )
 
+type config struct {
+	ServiceHostname string `env:"UCMS_HOSTNAME" envDefault:"127.0.0.1"`
+	ServicePort     int    `env:"UCMS_PORT" envDefault:"8080"`
+	FcmTopic        string `env:"UCMS_FCM_TOPIC" envDefault:"un"`
+}
+
 func main() {
+	cfg := config{}
+	if err := env.Parse(&cfg); err != nil {
+		panic(fmt.Sprintf("%+v\n", err))
+	}
+
 	var logger log.Logger
 	{
 		logger = log.NewLogfmtLogger(os.Stdout)
@@ -21,7 +33,7 @@ func main() {
 		logger = log.With(logger, "caller", log.DefaultCaller)
 	}
 
-	n := notification.Notifier{Topic: "un"}
+	n := notification.Notifier{Topic: cfg.FcmTopic}
 	{
 		if err := n.Connect(context.Background()); err != nil {
 			panic(err)
@@ -41,7 +53,7 @@ func main() {
 	}()
 	// Launch microservice.
 	go func() {
-		url := fmt.Sprintf("%s:%d", "0.0.0.0", 8888)
+		url := fmt.Sprintf("%s:%d", cfg.ServiceHostname, cfg.ServicePort)
 
 		logger.Log("transport", "HTTP", "addr", url)
 		errs <- http.ListenAndServe(url, h)

@@ -13,7 +13,7 @@ type LoggingMiddleware struct {
 }
 
 // Logging wrapper for token registration logic.
-func (lm LoggingMiddleware) Push(title, body, url, serviceName string) (bool, error) {
+func (lm LoggingMiddleware) Push(title, body, url, serviceName string) error {
 	defer func(begin time.Time) {
 		lm.Logger.Log(
 			"method", "Push",
@@ -21,6 +21,6 @@ func (lm LoggingMiddleware) Push(title, body, url, serviceName string) (bool, er
 		)
 	}(time.Now())
 
-	status, err := lm.Next.Push(title, body, url, serviceName)
-	return status, err
+	err := lm.Next.Push(title, body, url, serviceName)
+	return err
 }

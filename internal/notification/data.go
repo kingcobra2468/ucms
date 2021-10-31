@@ -7,11 +7,14 @@ import (
 	"firebase.google.com/go/messaging"
 )
 
+// Handle for Google FCM. Managing the sending of messages
+// to the specified topic.
 type AppAlerts interface {
 	Connect(ctx context.Context) error
 	SendNotification(title, body, url, serviceName string) error
 }
 
+// Client for message transmission onto FCM.
 type Notifier struct {
 	client *messaging.Client
 	Topic  string
@@ -32,6 +35,7 @@ func (n *Notifier) Connect(ctx context.Context) error {
 	return nil
 }
 
+// Send a notification onto the specified topic.
 func (n *Notifier) SendNotification(title, body, url string) error {
 	message := messaging.Message{
 		Notification: &messaging.Notification{
@@ -40,11 +44,6 @@ func (n *Notifier) SendNotification(title, body, url string) error {
 			ImageURL: url,
 		},
 		Topic: n.Topic,
-		Webpush: &messaging.WebpushConfig{
-			Notification: &messaging.WebpushNotification{
-				Icon: url,
-			},
-		},
 	}
 	_, err := n.client.Send(context.Background(), &message)
 

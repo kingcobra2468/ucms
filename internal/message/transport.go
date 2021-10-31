@@ -19,6 +19,8 @@ type errorer interface {
 	error() error
 }
 
+// Create the handler which manages the lifecycle of each of the
+// endpoints.
 func MakeHTTPHandler(ms MessageService) http.Handler {
 	r := mux.NewRouter()
 
@@ -31,7 +33,7 @@ func MakeHTTPHandler(ms MessageService) http.Handler {
 	return r
 }
 
-// Process the token registration request.
+// Process the messaging transmission request.
 func decodeNewNotificationRequest(_ context.Context, r *http.Request) (request interface{}, err error) {
 	var req NewNotificationRequest
 	if e := json.NewDecoder(r.Body).Decode(&req); e != nil {
